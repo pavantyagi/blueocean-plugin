@@ -10,6 +10,6 @@ require('./pipelines');
 require('./status');
 require('./icons');
 require('./logDisplay');
-require('./changes');
+require('./RunDetailsHeaderStories');
 require('./moments');
 require('./inputStep');
