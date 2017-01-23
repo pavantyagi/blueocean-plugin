@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 export const changeSet = [{
     _class: 'io.jenkins.blueocean.service.embedded.rest.ChangeSetResource',
     _links: {
