@@ -11,5 +11,6 @@ require('./status');
 require('./icons');
 require('./logDisplay');
 require('./RunDetailsHeaderStories');
+require('./FullScreenStories');
 require('./moments');
 require('./inputStep');
