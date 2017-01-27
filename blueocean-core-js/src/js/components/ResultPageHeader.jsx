@@ -46,7 +46,7 @@ export const ResultPageHeader = props => {
     const topNavLinks = _wrap(props.topNavLinks, 'nav');
     const runButton = _wrap(props.runButton, 'div', { className: 'ResultPageHeader-run' });
 
-    const classNames = ["ResultPageHeader"];
+    const classNames = ['ResultPageHeader'];
     if (props.className) {
         classNames.push(props.className);
     }

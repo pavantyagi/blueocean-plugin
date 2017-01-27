@@ -18,7 +18,9 @@ class RunDetailsHeader extends Component {
             onCloseClick,
             onAuthorsClick,
             onOrganizationClick,
-            onNameClick
+            onNameClick,
+            topNavLinks,
+            runButton,
         } = this.props;
 
         const {fullDisplayName} = pipeline;
@@ -94,7 +96,12 @@ class RunDetailsHeader extends Component {
         );
 
         return (
-            <ResultPageHeader title={title} status={status} onCloseClick={onCloseClick} className="RunDetailsHeader">
+            <ResultPageHeader title={title}
+                              status={status}
+                              onCloseClick={onCloseClick}
+                              className="RunDetailsHeader"
+                              topNavLinks={topNavLinks}
+                              runButton={runButton}>
                 <div className="RunDetailsHeader-sources">
                     { branchSourceDetails }
                     { commitSourceDetails }
@@ -111,18 +118,18 @@ class RunDetailsHeader extends Component {
     }
 }
 
-const { object, func, string } = PropTypes;
-
 RunDetailsHeader.propTypes = {
-    data: object.isRequired,
-    pipeline: object,
-    colors: object,
-    onOrganizationClick: func,
-    onNameClick: func,
-    onAuthorsClick: func,
+    data: PropTypes.object.isRequired,
+    pipeline: PropTypes.object,
+    colors: PropTypes.object,
+    onOrganizationClick: PropTypes.func,
+    onNameClick: PropTypes.func,
+    onAuthorsClick: PropTypes.func,
     onCloseClick: PropTypes.func,
-    t: func,
-    locale: string,
+    t: PropTypes.func,
+    locale: PropTypes.string,
+    topNavLinks: PropTypes.node,
+    runButton: PropTypes.node,
 };
 
 export { RunDetailsHeader };

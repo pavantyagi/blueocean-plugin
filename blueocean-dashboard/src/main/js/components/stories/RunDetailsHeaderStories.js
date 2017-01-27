@@ -40,6 +40,14 @@ storiesOf('Run Details Header', module)
 ;
 
 function someChanges() {
+
+    const topNavLinks = [
+        <a href="#" className="selected">Pipeline</a>,
+        <a href="#">Changes</a>,
+        <a href="#">Tests</a>,
+        <a href="#">Artifacts</a>,
+    ];
+
     return (
         <RunDetailsHeader
             locale="en"
@@ -48,7 +56,8 @@ function someChanges() {
             data={currentRun}
             onOrganizationClick={ action('button-click')}
             onNameClick={ action('button-click')}
-            onAuthorsClick={ action('button-click')}/>
+            onAuthorsClick={ action('button-click')}
+            topNavLinks={topNavLinks}/>
     );
 }
 

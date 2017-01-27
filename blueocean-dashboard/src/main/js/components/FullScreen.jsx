@@ -41,6 +41,9 @@ export class FullScreen extends Component {
             this.transitionTimeout = setTimeout(() => {
                 this.transitionTimeout = undefined;
                 this.forceUpdate();
+                if (this.props.afterClose) {
+                    this.props.afterClose();
+                }
             }, transitionDuration);
         }
     }
@@ -89,6 +92,7 @@ FullScreen.propTypes = {
     isVisible: PropTypes.bool,
     children: PropTypes.node,
     style: PropTypes.object,
+    afterClose: PropTypes.func,
 };
 
 FullScreen.defaultProps = {
