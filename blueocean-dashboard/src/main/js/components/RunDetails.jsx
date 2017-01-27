@@ -44,9 +44,13 @@ const classicConfigLink = (pipeline) => {
 
 const translate = i18nTranslator('blueocean-dashboard');
 
-
 @observer
 class RunDetails extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {isVisible: true};
+    }
 
     componentWillMount() {
         this._fetchRun(this.props, true);
@@ -120,11 +124,22 @@ class RunDetails extends Component {
     };
 
     closeButtonClicked = () => {
-        console.log("TODO: CLOSE");
+        this.setState({isVisible: false});
     };
 
     afterClose = () => {
+        const {router, location, params} = this.context;
+        const fallbackUrl = buildPipelineUrl(params.organization, params.pipeline);
 
+        location.pathname = this.opener || fallbackUrl;
+
+        // reset query
+        /*
+         FIXME: reset query when you go back, we may want to store the whole location object in previous so we have a perfect prev.
+         this.opener would then be location and we the above location = this.opener || {pathname: fallbackUrl]
+         */
+        location.query = null;
+        router.push(location);
     };
 
     render() {
@@ -137,6 +152,7 @@ class RunDetails extends Component {
 
         const {router, location, params} = this.context;
         const {pipeline, setTitle, t, locale} = this.props;
+        const {isVisible} = this.state;
 
         if (!run || !pipeline) {
             return <PageLoading />;
@@ -153,20 +169,6 @@ class RunDetails extends Component {
         };
 
         setTitle(`${currentRun.organization} / ${pipeline.fullName} #${currentRun.id}`);
-
-        const afterClose = () => {
-            const fallbackUrl = buildPipelineUrl(params.organization, params.pipeline);
-            location.pathname = this.opener || fallbackUrl;
-            // reset query
-            /*
-             FIXME: reset query when you go back, we may want to store the whole location object in previous so we have a perfect prev.
-             this.opener would then be location and we the above location = this.opener || {pathname: fallbackUrl]
-             */
-            location.query = null;
-            router.push(location);
-        };
-
-        const isVisible = true; // TODO: Change this on close button click? Set on initial render?
 
         const base = {base: baseUrl};
 
@@ -228,77 +230,6 @@ class RunDetails extends Component {
                 </div>
 
             </FullScreen>
-        );
-
-
-        return (
-            <ModalView
-                isVisible
-                transitionClass="expand-in"
-                transitionDuration={150}
-                result={status}
-                {...{afterClose}}
-            >
-                <ModalHeader>
-                    <div>
-                        <RunDetailsHeader
-                            t={ t }
-                            locale={locale}
-                            pipeline={pipeline}
-                            data={currentRun}
-                            onOrganizationClick={() => this.navigateToOrganization()}
-                            onNameClick={() => this.navigateToPipeline()}
-                            onAuthorsClick={() => this.navigateToChanges()}
-                        />
-                        <PageTabsOld base={baseUrl}>
-                            <TabLink to="/pipeline">{t('rundetail.header.tab.pipeline', {
-                                defaultValue: 'Pipeline',
-                            })}</TabLink>
-                            <TabLink to="/changes">{t('rundetail.header.tab.changes', {
-                                defaultValue: 'Changes',
-                            })}</TabLink>
-                            <TabLink to="/tests">{t('rundetail.header.tab.tests', {
-                                defaultValue: 'Tests',
-                            })}</TabLink>
-                            <TabLink to="/artifacts">{t('rundetail.header.tab.artifacts', {
-                                defaultValue: 'Artifacts',
-                            })}</TabLink>
-                        </PageTabsOld>
-
-                        <div className="button-bar">
-                            <ReplayButton
-                                className="dark"
-                                runnable={this.props.pipeline}
-                                latestRun={currentRun}
-                                onNavigation={switchRunDetails}
-                                autoNavigate
-                            />
-
-                            <RunButton
-                                className="dark"
-                                runnable={this.props.pipeline}
-                                latestRun={currentRun}
-                                buttonType="stop-only"
-                            />
-                            {classicConfigLink(pipeline)}
-                        </div>
-                    </div>
-                </ModalHeader>
-                <ModalBody>
-                    <div>
-                        {run && React.cloneElement(
-                            this.props.children,
-                            {
-                                locale: translate.lng,
-                                baseUrl,
-                                t: translate,
-                                result: currentRun,
-                                isMultiBranch: this.isMultiBranch, ...this.props
-                            }
-                        )}
-                    </div>
-                </ModalBody>
-            </ModalView>
         );
     }
 }
