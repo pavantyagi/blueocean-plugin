@@ -6,6 +6,8 @@ import org.kohsuke.stapler.export.ExportedBean;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,8 +27,7 @@ public class JSONDataWriterTest {
         @Exported
         public String a = "aval";
         public String b = "bval";
-        @Exported
-        public String getC() {return "cval";}
+        @Exported public String getC() {return "cval";}
         public String getD() {return "dval";}
     }
 
@@ -37,20 +38,15 @@ public class JSONDataWriterTest {
     }
 
     @ExportedBean(defaultVisibility=2) public static abstract class Super {
-        @Exported
-        public String basic = "super";
-        @Exported
-        public abstract String generic();
+        @Exported public String basic = "super";
+        @Exported public abstract String generic();
     }
     public static class Sub extends Super {
         public String generic() {return "sub";}
-        @Exported
-        public String specific() {return "sub";}
+        @Exported public String specific() {return "sub";}
     }
-    @ExportedBean
-    public static class Container {
-        @Exported
-        public Super polymorph = new Sub();
+    @ExportedBean public static class Container {
+        @Exported public Super polymorph = new Sub();
     }
 
     @Test
@@ -60,8 +56,7 @@ public class JSONDataWriterTest {
     }
 
     public static class Sub2 extends Super {
-        @Exported
-        @Override public String generic() {return "sub2";}
+        @Exported @Override public String generic() {return "sub2";}
     }
 
     @Test
@@ -69,4 +64,20 @@ public class JSONDataWriterTest {
         assertEquals("{\"_class\":\"Sub2\",\"basic\":\"super\",\"generic\":\"sub2\"}",
                 serialize(new Sub2(), Sub2.class));
     }
+
+    @Test
+    public void exceptionHandling() throws IOException {
+        assertEquals("{\"_class\":\"Supers\",\"elements\":[{\"_class\":\"Sub\",\"basic\":\"super\",\"generic\":\"sub\",\"specific\":\"sub\"},{\"_class\":\"Sub2\",\"basic\":\"super\",\"generic\":\"sub2\"}]}",
+                serialize(new Supers(new Sub(), new Broken(), new Sub2()), Supers.class));
+    }
+    public static class Broken extends Super {
+        @Exported @Override public String generic() {throw new RuntimeException("oops");}
+    }
+    @ExportedBean public static class Supers {
+        @Exported public final List<? extends Super> elements;
+        public Supers(Super... elements) {
+            this.elements = Arrays.asList(elements);
+        }
+    }
+
 }
